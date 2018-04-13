@@ -104,11 +104,38 @@ cmd_table(struct TinyTable * const tt, vector<string> &params)
 cmd_getrow(struct TinyTable * const tt, vector<string> &params)
 {
   // (1) Check if table scheme has been defined.
+  if (tt->columns.size() == 0) {
+    cerr << "[getrow] table not defined." << endl;
+    return;
+  }
+
   // (2) Check parameters
+  if (params.size() == 0) {
+    cerr << "[getrow] need row name(s)." << endl;
+    return;
+  }
+
   // (3) Do getr
   // (4) print results to cout
-  // TODO: Your code here
-  cout << "[getrow] Not Implemented" << endl;
+
+  // row iterator
+  for(vector<string>::iterator ir = params.begin();ir != params.end(); ir++){
+    stringstream output;
+    output << " [getrow] " << *ir << " ";
+
+    // column iterator
+    for (vector<string>::iterator ic = tt->columns.begin();ic != tt->columns.end(); ic++) {
+      string key = combine_key(*ir, *ic);
+      string value;
+      const bool found = lldb_get(tt, key, value);
+      if (found) {
+        output << value << " ";
+      } else {
+        output << "[miss]" << " ";
+      }
+    }
+    
+  }
 }
 
 /**
@@ -187,10 +214,21 @@ cmd_getelem(struct TinyTable * const tt, vector<string> &params)
 cmd_setelem(struct TinyTable * const tt, vector<string> &params)
 {
   // (1) Check if table scheme has been defined.
+  if (tt->columns.size() == 0) {
+    cerr << "[setelem] table not defined." << endl;
+    return;
+  }
+
   // (2) Check parameters
+  if (params.size() != 3) {
+    cerr << "[setelem] Need exactly 3 parameters" << endl;
+    return;
+  }
+
   // (3) Do set element
-  // TODO: Your code here:
-  cout << "[setelem] Not Implemented" << endl;
+  string key = combine_key(params[0], params[1]);
+  string value = params[2];
+  lldb_set(tt, key, value);
 }
 
 /**
@@ -300,6 +338,21 @@ save_table_scheme(struct TinyTable * const tt)
   // Save it in tt->lldb.
   // NEVER erase any data stored by user. Be careful of the corner cases.
   // TODO: Your code here:
+
+  WriteBatch wb;
+  Status s;
+  WriteOptions wopt;
+
+  string key = "init_table_scheme";
+  string *value;
+  value = new string[ tt->columns.size() ];
+  for(int i = 0; i < tt->columns.size(); i++){
+    value[i] = tt->columns[i];
+  }
+
+  wb.Put(key,value);
+  s = tt->lldb->Write(wopt, &wb);
+  assert(s.ok());
 }
 
   static void
@@ -307,6 +360,8 @@ load_table_scheme(struct TinyTable * const tt)
 {
   // load previously stored schemes from tt->lldb
   // TODO: Your code here:
+
+
 }
 
   int
