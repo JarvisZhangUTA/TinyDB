@@ -383,6 +383,7 @@ load_table_scheme(struct TinyTable * const tt)
   // TODO: Your code here:
 
   string key = "init_table_scheme";
+  string value;
   const bool found = lldb_get(tt, key, value);
   if (found) {
       string divider = "\n";
