@@ -135,6 +135,7 @@ cmd_getrow(struct TinyTable * const tt, vector<string> &params)
       }
     }
     
+    cout << output.str() << endl;
   }
 }
 
@@ -173,10 +174,26 @@ cmd_setrow(struct TinyTable * const tt, vector<string> &params)
 cmd_delrow(struct TinyTable * const tt, vector<string> &params)
 {
   // (1) Check if table scheme has been defined.
+  if (tt->columns.size() == 0) {
+    cerr << "[delrow] table not defined." << endl;
+    return;
+  }
   // (2) Check parameters
+  if (params.size() == 0) {
+    cerr << "[delrow] Need row name" << endl;
+    return;
+  }
   // (3) do delrow
-  // TODO: Your code here:
-  cout << "[delrow] Not Implemented" << endl;
+  // row iterator
+  for(vector<string>::iterator ir = params.begin();ir != params.end(); ir++){
+    // column iterator
+    for (vector<string>::iterator ic = tt->columns.begin();ic != tt->columns.end(); ic++) {
+      string key = combine_key(*ir, *ic);
+      lldb_del(tt, key);
+    }
+
+    cout << "[delrow] " << *ir << " deleted" << endl;
+  }
 }
 
 /**
@@ -240,10 +257,20 @@ cmd_setelem(struct TinyTable * const tt, vector<string> &params)
 cmd_delelem(struct TinyTable * const tt, vector<string> &params)
 {
   // (1) Check if table has been defined.
+  if (tt->columns.size() == 0) {
+    cerr << "[setelem] table not defined." << endl;
+    return;
+  }
   // (2) Check parameters
+  if (params.size() != 2) {
+    cerr << "[setelem] Need exactly 2 parameters" << endl;
+    return;
+  }
+
   // (3) Do delete element
-  // TODO: Your code here:
-  cout << "[delelem] Not Implemented" << endl;
+  lldb_set(tt, params[0], params[1]);
+
+  cout << "[delelem] row " << params[0] << " col " << params[1] << " deleted" << endl;
 }
 
   static bool
@@ -339,20 +366,14 @@ save_table_scheme(struct TinyTable * const tt)
   // NEVER erase any data stored by user. Be careful of the corner cases.
   // TODO: Your code here:
 
-  // WriteBatch wb;
-  // Status s;
-  // WriteOptions wopt;
+  stringstream stream;
+  for (vector<string>::iterator ic = tt->columns.begin();ic != tt->columns.end(); ic++) {
+    stream << *ic << "\n";
+  }
+	string value = stream.str();
+  string key = "init_table_scheme";
 
-  // string key = "init_table_scheme";
-  // string *value;
-  // value = new string[ tt->columns.size() ];
-  // for(int i = 0; i < tt->columns.size(); i++){
-  //   value[i] = tt->columns[i];
-  // }
-
-  // wb.Put(key,value);
-  // s = tt->lldb->Write(wopt, &wb);
-  // assert(s.ok());
+  lldb_set(tt, key, value);
 }
 
   static void
@@ -361,7 +382,24 @@ load_table_scheme(struct TinyTable * const tt)
   // load previously stored schemes from tt->lldb
   // TODO: Your code here:
 
-
+  string key = "init_table_scheme";
+  const bool found = lldb_get(tt, key, value);
+  if (found) {
+      string divider = "\n";
+      string::size_type pos1, pos2;
+      pos2 = value.find(divider);
+      pos1 = 0;
+      while(string::npos != pos2)
+      {
+        tt->columns.push_back(value.substr(pos1, pos2-pos1));
+        pos1 = pos2 + divider.size();
+        pos2 = value.find(divider, pos1);
+      }
+      if(pos1 != value.length())
+        tt->columns.push_back(value.substr(pos1));
+      
+      cout << "Load scheme" << endl;
+  } 
 }
 
   int
