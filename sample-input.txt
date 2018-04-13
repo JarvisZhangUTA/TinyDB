@@ -1,0 +1,28 @@
+table    limit     who        when      type-of-table
+setrow 0   800       Cataldi    1603      least-prime-factor
+setrow 1   100000    Brancker   1668      least-prime-factor
+setrow 2   100000    Kruger     1746      primes
+setrow 3   102000    Lambert    1770      least-prime-factor
+setrow 4   408000    Felkel     1776      least-prime-factor
+setrow 5   400031    Vega       1797      primes
+setrow 6   1020000   Chernac    1811      least-prime-factor
+setrow 7   3036000   Burkhardt  1816/17   primes
+setrow 8   6000000   Crelle     1856      primes
+setrow 9   9000000   Dase       1861      primes
+setrow a   100330200 Kulik      1863?     least-prime-factor
+setrow b   10007000  D.N.Lehmer 1909      least-prime-factor
+setrow c   10006721  D.N.Lehmer 1914      primes
+getrow 0 1 2 3 4 5 6 7 8 9 a b c
+delrow 0 1
+delrow 7 8 9
+getrow 0 1 2 3 4 5 6 7 8 9 a b c
+setelem 2   limit     999999
+getelem 2   limit
+setelem 5   who       VEGA
+getelem 5   who
+setelem 6   when      1811?
+getelem 6   when
+delelem 4   who
+delelem 4   when
+getrow 0 1 2 3 4 5 6 7 8 9 a b c
+exit
