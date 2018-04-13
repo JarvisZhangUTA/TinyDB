@@ -268,7 +268,7 @@ cmd_delelem(struct TinyTable * const tt, vector<string> &params)
   }
 
   // (3) Do delete element
-  lldb_set(tt, params[0], params[1]);
+  lldb_del(tt, params[0], params[1]);
 
   cout << "[delelem] row " << params[0] << " col " << params[1] << " deleted" << endl;
 }
