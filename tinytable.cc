@@ -339,20 +339,20 @@ save_table_scheme(struct TinyTable * const tt)
   // NEVER erase any data stored by user. Be careful of the corner cases.
   // TODO: Your code here:
 
-  WriteBatch wb;
-  Status s;
-  WriteOptions wopt;
+  // WriteBatch wb;
+  // Status s;
+  // WriteOptions wopt;
 
-  string key = "init_table_scheme";
-  string *value;
-  value = new string[ tt->columns.size() ];
-  for(int i = 0; i < tt->columns.size(); i++){
-    value[i] = tt->columns[i];
-  }
+  // string key = "init_table_scheme";
+  // string *value;
+  // value = new string[ tt->columns.size() ];
+  // for(int i = 0; i < tt->columns.size(); i++){
+  //   value[i] = tt->columns[i];
+  // }
 
-  wb.Put(key,value);
-  s = tt->lldb->Write(wopt, &wb);
-  assert(s.ok());
+  // wb.Put(key,value);
+  // s = tt->lldb->Write(wopt, &wb);
+  // assert(s.ok());
 }
 
   static void
